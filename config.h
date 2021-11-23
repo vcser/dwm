@@ -64,6 +64,7 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod1Mask
+#define WINKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -79,6 +80,12 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "rofi", "-show", "run", NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *switchwindowcmd[] = {"rofi", "-show", "window", NULL};
+static const char *raisevolumecmd[] = {"amixer", "set", "Master", "5%+", "unmute", NULL};
+static const char *lowervolumecmd[] = {"amixer", "set", "Master", "5%-", "unmute", NULL};
+static const char *mutevolumecmd[] = {"amixer", "set", "Master", "toggle", NULL};
+static const char *brightnessupcmd[] = {"doas", "-n", "xbacklight", "-inc", "10", NULL};
+static const char *brightnessdowncmd[] = {"doas", "-n", "xbacklight", "-dec", "10", NULL};
+static const char *rofimenucmd[] = {"rofi", "-modi", "ControlPanel:rofi-control-panel,PowerMenu:rofi-power-menu", "-show", "ControlPanel", "-sidebar-mode", NULL};
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -95,9 +102,9 @@ static Key keys[] = {
 //	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_Tab,    spawn,          {.v = switchwindowcmd } },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -115,7 +122,13 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+//	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ 0,             XF86XK_AudioRaiseVolume, spawn,            {.v = raisevolumecmd } },
+	{ 0,             XF86XK_AudioLowerVolume, spawn,            {.v = lowervolumecmd } },
+	{ 0,             XF86XK_AudioMute, spawn,                   {.v = mutevolumecmd } },
+	{ 0,             XF86XK_MonBrightnessUp, spawn,                   {.v = brightnessupcmd } },
+	{ 0,             XF86XK_MonBrightnessDown, spawn,                   {.v = brightnessdowncmd } },
+	{ WINKEY,                       XK_Escape, spawn,          {.v = rofimenucmd } },
 };
 
 /* button definitions */
